@@ -67,8 +67,8 @@ Header:
 Body Response:
   - `currentBalance`: `Decimal`
   - `transactions`: `ListOf<Transaction>`
-    - `value`: `Decimal`
-    - `label`: `String`
+  - `value`: `Decimal`
+  - `label`: `String`
 
 ### `POST /account/transfer`
 
