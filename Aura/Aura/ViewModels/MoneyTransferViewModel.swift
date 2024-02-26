@@ -8,6 +8,7 @@
 import Foundation
 
 class MoneyTransferViewModel: ObservableObject {
+    
     @Published var recipient: String = ""
     @Published var amount: String = ""
     @Published var transferMessage: String = ""

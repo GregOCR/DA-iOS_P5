@@ -8,7 +8,12 @@
 import SwiftUI
 
 extension View {
+    
+    // replace deprecated 'UIApplication.shared.windows'
     func endEditing(_ force: Bool) {
-        UIApplication.shared.windows.forEach { $0.endEditing(force)}
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap { $0.windows }
+            .forEach { $0.endEditing(true) }
     }
 }

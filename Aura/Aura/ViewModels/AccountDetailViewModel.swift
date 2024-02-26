@@ -8,6 +8,7 @@
 import Foundation
 
 class AccountDetailViewModel: ObservableObject {
+    
     @Published var totalAmount: String = "€12,345.67"
     @Published var recentTransactions: [Transaction] = [
         Transaction(description: "Starbucks", amount: "-€5.50"),
@@ -15,8 +16,7 @@ class AccountDetailViewModel: ObservableObject {
         Transaction(description: "Salary", amount: "+€2,500.00")
     ]
     
-    struct Transaction {
-        let description: String
-        let amount: String
+    func showTransactionDetails() {
+        
     }
 }

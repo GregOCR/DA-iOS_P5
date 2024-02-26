@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct AuraApp: App {
+    
     @StateObject var viewModel = AppViewModel()
     
     var body: some Scene {
+        
         WindowGroup {
             Group {
                 if viewModel.isLogged {
@@ -28,15 +30,12 @@ struct AuraApp: App {
                                 Text("Transfer")
                             }
                     }
-                    
                 } else {
                     AuthenticationView(viewModel: viewModel.authenticationViewModel)
                         .transition(.asymmetric(insertion: .move(edge: .trailing).combined(with: .opacity),
                                                 removal: .move(edge: .top).combined(with: .opacity)))
-                    
                 }
             }
-            .accentColor(Color(hex: "#94A684"))
             .animation(.easeInOut(duration: 0.5), value: UUID())
         }
     }
