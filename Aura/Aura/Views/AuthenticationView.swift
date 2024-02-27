@@ -11,9 +11,6 @@ struct AuthenticationView: View {
     
     @ObservedObject var viewModel: AuthenticationViewModel
     
-    @State private var username: String = ""
-    @State private var password: String = ""
-    
     var body: some View {
         
         ZStack {
@@ -28,13 +25,17 @@ struct AuthenticationView: View {
                 Button(action: {
                     viewModel.login()
                 }) {
-                    Text("Connexion")
+                    Text("Connection")
                         .frame(maxWidth: .infinity)
                 } // login button
                 .padding()
                 .background(Color.accentColor)
                 .foregroundColor(.white)
                 .cornerRadius(8)
+                
+                if !viewModel.message.isEmpty {
+                    Text(viewModel.message)
+                }
             }
             .padding(.horizontal, 40)
         }
