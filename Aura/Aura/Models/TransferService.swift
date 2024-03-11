@@ -7,6 +7,6 @@
 
 import Foundation
 
-class TransfertService: ObservableObject {
+class TransferService: ObservableObject {
     
 }

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3706E18B2B9F11D500396BAF /* TransfertService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3706E18A2B9F11D500396BAF /* TransfertService.swift */; };
+		3706E18B2B9F11D500396BAF /* TransferService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3706E18A2B9F11D500396BAF /* TransferService.swift */; };
 		3706E18D2B9F60FF00396BAF /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3706E18C2B9F60FF00396BAF /* Transaction.swift */; };
 		3706E18F2B9F616600396BAF /* NumberFormatter+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3706E18E2B9F616600396BAF /* NumberFormatter+Extensions.swift */; };
 		371CF6312B95FE2700A7F53E /* AccountDetailTransactionEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371CF6302B95FE2700A7F53E /* AccountDetailTransactionEntryView.swift */; };
@@ -31,7 +31,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		3706E18A2B9F11D500396BAF /* TransfertService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransfertService.swift; sourceTree = "<group>"; };
+		3706E18A2B9F11D500396BAF /* TransferService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransferService.swift; sourceTree = "<group>"; };
 		3706E18C2B9F60FF00396BAF /* Transaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
 		3706E18E2B9F616600396BAF /* NumberFormatter+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NumberFormatter+Extensions.swift"; sourceTree = "<group>"; };
 		371CF6302B95FE2700A7F53E /* AccountDetailTransactionEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDetailTransactionEntryView.swift; sourceTree = "<group>"; };
@@ -74,7 +74,7 @@
 				37BD73152B8D99EE005DBCC1 /* AuthService.swift */,
 				3706E18C2B9F60FF00396BAF /* Transaction.swift */,
 				37BD73132B8D9397005DBCC1 /* NetworkService.swift */,
-				3706E18A2B9F11D500396BAF /* TransfertService.swift */,
+				3706E18A2B9F11D500396BAF /* TransferService.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -236,7 +236,7 @@
 				53D418912AC70A920070ADB1 /* AuthenticationView.swift in Sources */,
 				3706E18F2B9F616600396BAF /* NumberFormatter+Extensions.swift in Sources */,
 				37BD73142B8D9397005DBCC1 /* NetworkService.swift in Sources */,
-				3706E18B2B9F11D500396BAF /* TransfertService.swift in Sources */,
+				3706E18B2B9F11D500396BAF /* TransferService.swift in Sources */,
 				3706E18D2B9F60FF00396BAF /* Transaction.swift in Sources */,
 				53D418932AC70AB10070ADB1 /* AccountDetailView.swift in Sources */,
 				53D4189F2AC717890070ADB1 /* MoneyTransferViewModel.swift in Sources */,
