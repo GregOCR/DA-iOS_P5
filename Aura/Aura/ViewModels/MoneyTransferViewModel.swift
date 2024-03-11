@@ -6,20 +6,24 @@
 //
 
 import Foundation
+import SwiftUI
 
 class MoneyTransferViewModel: ObservableObject {
     
     @Published var recipient: String = ""
-    @Published var amount: String = ""
+    @Published var amount: Float = 0.0
+    
     @Published var transferMessage: String = ""
     
     func sendMoney() {
-        // Logic to send money - for now, we're just setting a success message.
-        // You can later integrate actual logic.
-        if !recipient.isEmpty && !amount.isEmpty {
+        guard let url = URL(string: "http://127.0.0.1:8080/account/transfert") else { return }
+
+
+        if !recipient.isEmpty && !amount.isZero {
             transferMessage = "Successfully transferred \(amount) to \(recipient)"
         } else {
             transferMessage = "Please enter recipient and amount."
         }
     }
 }
+

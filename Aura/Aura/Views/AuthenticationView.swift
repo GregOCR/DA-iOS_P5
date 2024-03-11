@@ -20,7 +20,8 @@ struct AuthenticationView: View {
                 AuthenticationHeaderView()
                 
                 AuthenticationFormView(usernameBinding: $viewModel.username,
-                                       passwordBinding: $viewModel.password)
+                                       passwordBinding: $viewModel.password,
+                                       loginError: $viewModel.loginError)
                 
                 Button(action: {
                     viewModel.login()
@@ -33,8 +34,8 @@ struct AuthenticationView: View {
                 .foregroundColor(.white)
                 .cornerRadius(8)
                 
-                if !viewModel.message.isEmpty {
-                    Text(viewModel.message)
+                if viewModel.loginError != .none { // if login error
+                    Text(viewModel.loginError.rawValue)
                 }
             }
             .padding(.horizontal, 40)
@@ -83,7 +84,10 @@ struct AuthenticationFormView: View {
     @Binding var usernameBinding: String
     @Binding var passwordBinding: String
     
+    @Binding var loginError: LoginError
+    
     var body: some View {
+        
         TextField("Email address", text: $usernameBinding)
             .padding()
             .background(Color(UIColor.secondarySystemBackground))
@@ -91,10 +95,22 @@ struct AuthenticationFormView: View {
             .autocapitalization(.none)
             .keyboardType(.emailAddress)
             .disableAutocorrection(true)
+            .overlay(content: { // red outline if email or access error
+                if (loginError == .emailError) || (loginError == .accessDeniedError) || (loginError == .emailPasswordError) {
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.red, lineWidth: 2)
+                }
+            })
         
         SecureField("Password", text: $passwordBinding)
             .padding()
             .background(Color(UIColor.secondarySystemBackground))
             .cornerRadius(8)
+            .overlay(content: { // red outline if password or access error
+                if (loginError == .passwordError) || (loginError == .accessDeniedError)  || (loginError == .emailPasswordError) {
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.red, lineWidth: 2)
+                }
+            })
     }
 }
