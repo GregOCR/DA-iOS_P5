@@ -7,8 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		372DBE762B8CE56A00B7213F /* TransactionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 372DBE752B8CE56A00B7213F /* TransactionModel.swift */; };
+		3706E18B2B9F11D500396BAF /* TransfertService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3706E18A2B9F11D500396BAF /* TransfertService.swift */; };
+		3706E18D2B9F60FF00396BAF /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3706E18C2B9F60FF00396BAF /* Transaction.swift */; };
+		3706E18F2B9F616600396BAF /* NumberFormatter+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3706E18E2B9F616600396BAF /* NumberFormatter+Extensions.swift */; };
+		371CF6312B95FE2700A7F53E /* AccountDetailTransactionEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 371CF6302B95FE2700A7F53E /* AccountDetailTransactionEntryView.swift */; };
+		372DBE762B8CE56A00B7213F /* AccountResponseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 372DBE752B8CE56A00B7213F /* AccountResponseModel.swift */; };
 		3743AB682B8CD7680081B0E1 /* AppButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3743AB672B8CD7680081B0E1 /* AppButtonView.swift */; };
+		37BD73102B8D3204005DBCC1 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BD730F2B8D3204005DBCC1 /* KeychainService.swift */; };
+		37BD73142B8D9397005DBCC1 /* NetworkService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BD73132B8D9397005DBCC1 /* NetworkService.swift */; };
+		37BD73162B8D99EE005DBCC1 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BD73152B8D99EE005DBCC1 /* AuthService.swift */; };
 		53D4187C2AC7099A0070ADB1 /* AuraApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53D4187B2AC7099A0070ADB1 /* AuraApp.swift */; };
 		53D418802AC7099B0070ADB1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 53D4187F2AC7099B0070ADB1 /* Assets.xcassets */; };
 		53D418832AC7099B0070ADB1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 53D418822AC7099B0070ADB1 /* Preview Assets.xcassets */; };
@@ -24,8 +31,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		372DBE752B8CE56A00B7213F /* TransactionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionModel.swift; sourceTree = "<group>"; };
+		3706E18A2B9F11D500396BAF /* TransfertService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransfertService.swift; sourceTree = "<group>"; };
+		3706E18C2B9F60FF00396BAF /* Transaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
+		3706E18E2B9F616600396BAF /* NumberFormatter+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NumberFormatter+Extensions.swift"; sourceTree = "<group>"; };
+		371CF6302B95FE2700A7F53E /* AccountDetailTransactionEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDetailTransactionEntryView.swift; sourceTree = "<group>"; };
+		372DBE752B8CE56A00B7213F /* AccountResponseModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountResponseModel.swift; sourceTree = "<group>"; };
 		3743AB672B8CD7680081B0E1 /* AppButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppButtonView.swift; sourceTree = "<group>"; };
+		37BD730F2B8D3204005DBCC1 /* KeychainService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
+		37BD73132B8D9397005DBCC1 /* NetworkService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkService.swift; sourceTree = "<group>"; };
+		37BD73152B8D99EE005DBCC1 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		53D418782AC7099A0070ADB1 /* Aura.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Aura.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		53D4187B2AC7099A0070ADB1 /* AuraApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuraApp.swift; sourceTree = "<group>"; };
 		53D4187F2AC7099B0070ADB1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -55,7 +69,12 @@
 		372DBE742B8CE55900B7213F /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				372DBE752B8CE56A00B7213F /* TransactionModel.swift */,
+				372DBE752B8CE56A00B7213F /* AccountResponseModel.swift */,
+				37BD730F2B8D3204005DBCC1 /* KeychainService.swift */,
+				37BD73152B8D99EE005DBCC1 /* AuthService.swift */,
+				3706E18C2B9F60FF00396BAF /* Transaction.swift */,
+				37BD73132B8D9397005DBCC1 /* NetworkService.swift */,
+				3706E18A2B9F11D500396BAF /* TransfertService.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -64,6 +83,7 @@
 			isa = PBXGroup;
 			children = (
 				3743AB672B8CD7680081B0E1 /* AppButtonView.swift */,
+				371CF6302B95FE2700A7F53E /* AccountDetailTransactionEntryView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -133,6 +153,7 @@
 			children = (
 				53D418982AC70FD80070ADB1 /* Color+Extensions.swift */,
 				53D418A02AC71B8F0070ADB1 /* View+Extensions.swift */,
+				3706E18E2B9F616600396BAF /* NumberFormatter+Extensions.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -207,18 +228,25 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				372DBE762B8CE56A00B7213F /* TransactionModel.swift in Sources */,
+				372DBE762B8CE56A00B7213F /* AccountResponseModel.swift in Sources */,
 				53D4187C2AC7099A0070ADB1 /* AuraApp.swift in Sources */,
 				53D418952AC70ABF0070ADB1 /* MoneyTransferView.swift in Sources */,
 				53D4189B2AC711990070ADB1 /* AuthenticationViewModel.swift in Sources */,
 				53D4189D2AC715AA0070ADB1 /* AccountDetailViewModel.swift in Sources */,
 				53D418912AC70A920070ADB1 /* AuthenticationView.swift in Sources */,
+				3706E18F2B9F616600396BAF /* NumberFormatter+Extensions.swift in Sources */,
+				37BD73142B8D9397005DBCC1 /* NetworkService.swift in Sources */,
+				3706E18B2B9F11D500396BAF /* TransfertService.swift in Sources */,
+				3706E18D2B9F60FF00396BAF /* Transaction.swift in Sources */,
 				53D418932AC70AB10070ADB1 /* AccountDetailView.swift in Sources */,
 				53D4189F2AC717890070ADB1 /* MoneyTransferViewModel.swift in Sources */,
 				3743AB682B8CD7680081B0E1 /* AppButtonView.swift in Sources */,
 				53D4188D2AC709F40070ADB1 /* AppViewModel.swift in Sources */,
+				37BD73102B8D3204005DBCC1 /* KeychainService.swift in Sources */,
+				37BD73162B8D99EE005DBCC1 /* AuthService.swift in Sources */,
 				53D418A12AC71B8F0070ADB1 /* View+Extensions.swift in Sources */,
 				53D418992AC70FD80070ADB1 /* Color+Extensions.swift in Sources */,
+				371CF6312B95FE2700A7F53E /* AccountDetailTransactionEntryView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

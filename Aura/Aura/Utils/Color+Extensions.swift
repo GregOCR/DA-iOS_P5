@@ -8,7 +8,6 @@
 import SwiftUI
 
 extension Color {
-    
     func translucent() -> Color {
         self.opacity(0)
     }

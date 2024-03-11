@@ -11,9 +11,6 @@ struct AuthenticationView: View {
     
     @ObservedObject var viewModel: AuthenticationViewModel
     
-    @State private var username: String = ""
-    @State private var password: String = ""
-    
     var body: some View {
         
         ZStack {
@@ -23,18 +20,23 @@ struct AuthenticationView: View {
                 AuthenticationHeaderView()
                 
                 AuthenticationFormView(usernameBinding: $viewModel.username,
-                                       passwordBinding: $viewModel.password)
+                                       passwordBinding: $viewModel.password,
+                                       loginError: $viewModel.loginError)
                 
                 Button(action: {
                     viewModel.login()
                 }) {
-                    Text("Connexion")
+                    Text("Connection")
                         .frame(maxWidth: .infinity)
                 } // login button
                 .padding()
                 .background(Color.accentColor)
                 .foregroundColor(.white)
                 .cornerRadius(8)
+                
+                if viewModel.loginError != .none { // if login error
+                    Text(viewModel.loginError.rawValue)
+                }
             }
             .padding(.horizontal, 40)
         }
@@ -82,7 +84,10 @@ struct AuthenticationFormView: View {
     @Binding var usernameBinding: String
     @Binding var passwordBinding: String
     
+    @Binding var loginError: LoginError
+    
     var body: some View {
+        
         TextField("Email address", text: $usernameBinding)
             .padding()
             .background(Color(UIColor.secondarySystemBackground))
@@ -90,10 +95,22 @@ struct AuthenticationFormView: View {
             .autocapitalization(.none)
             .keyboardType(.emailAddress)
             .disableAutocorrection(true)
+            .overlay(content: { // red outline if email or access error
+                if (loginError == .emailError) || (loginError == .accessDeniedError) || (loginError == .emailPasswordError) {
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.red, lineWidth: 2)
+                }
+            })
         
         SecureField("Password", text: $passwordBinding)
             .padding()
             .background(Color(UIColor.secondarySystemBackground))
             .cornerRadius(8)
+            .overlay(content: { // red outline if password or access error
+                if (loginError == .passwordError) || (loginError == .accessDeniedError)  || (loginError == .emailPasswordError) {
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(Color.red, lineWidth: 2)
+                }
+            })
     }
 }

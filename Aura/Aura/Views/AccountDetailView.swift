@@ -11,31 +11,50 @@ struct AccountDetailView: View {
     
     @ObservedObject var viewModel: AccountDetailViewModel
     
+    @State var recentTransactionsOnly: Bool = true
+    
     var body: some View {
         VStack(spacing: 20) {
             // Large Header displaying total amount
             AccoundDetailHeaderView(totalAmount: viewModel.totalAmount)
             
             // Display recent transactions
-            AccountDetailRecentTransactionsView(recentTransactions: viewModel.recentTransactions)
-            
+            ScrollView {
+                AccountDetailTransactionsView(transactions: viewModel.recentTransactions,
+                                              recentTransactionsOnly: recentTransactionsOnly)
+            }
             // Button to see details of transactions
-            AppButtonView(title: "See Transaction Details",
-                          imageName: "list.bullet",
-                          action: viewModel.showTransactionDetails)
+            Button(action: {
+                withAnimation { // animating changed elements by action
+                    recentTransactionsOnly.toggle()
+                }
+            }) {
+                HStack {
+                    Image(systemName: "list.bullet")
+                    Text(recentTransactionsOnly ? "See Transaction Details" : "See Recent Transactions")
+                }
+                .padding()
+                .background(Color.accentColor)
+                .foregroundColor(.white)
+                .cornerRadius(8)
+            }
             .padding([.horizontal, .bottom])
             
             Spacer()
         }
+        .transition(.opacity.animation(.easeInOut(duration: 0.5))) // define the transition animation for the view
         .onTapGesture {
             self.endEditing(true)  // This will dismiss the keyboard when tapping outside
+        }
+        .onAppear {
+            recentTransactionsOnly = true
         }
     }
 }
 
-#Preview {
-    AccountDetailView(viewModel: AccountDetailViewModel())
-}
+//#Preview {
+//    AccountDetailView(viewModel: AccountDetailViewModel())
+//}
 
 struct AccoundDetailHeaderView: View {
     
@@ -48,6 +67,9 @@ struct AccoundDetailHeaderView: View {
             Text(totalAmount)
                 .font(.system(size: 60, weight: .bold))
                 .foregroundColor(Color.accentColor)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
+                .padding(.horizontal, 20)
             Image(systemName: "eurosign.circle.fill")
                 .resizable()
                 .scaledToFit()
@@ -58,29 +80,18 @@ struct AccoundDetailHeaderView: View {
     }
 }
 
-struct AccountDetailRecentTransactionsView: View {
+struct AccountDetailTransactionsView: View {
     
-    var recentTransactions: [Transaction]
+    var transactions: [Transaction]
+    var recentTransactionsOnly: Bool
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("Recent Transactions")
+            Text(recentTransactionsOnly ? "Recent Transactions" : "Transaction Details")
                 .font(.headline)
                 .padding([.horizontal])
-            ForEach(recentTransactions, id: \.description) { transaction in
-                HStack {
-                    Image(systemName: transaction.amount.contains("+") ? "arrow.up.right.circle.fill" : "arrow.down.left.circle.fill")
-                        .foregroundColor(transaction.amount.contains("+") ? .green : .red)
-                    Text(transaction.description)
-                    Spacer()
-                    Text(transaction.amount)
-                        .fontWeight(.bold)
-                        .foregroundColor(transaction.amount.contains("+") ? .green : .red)
-                }
-                .padding()
-                .background(Color.gray.opacity(0.1))
-                .cornerRadius(8)
-                .padding([.horizontal])
+            ForEach(transactions.prefix(recentTransactionsOnly ? 3 : 50), id: \.value) { transaction in
+                AccountDetailTransactionEntryView(transaction: transaction)
             }
         }
     }

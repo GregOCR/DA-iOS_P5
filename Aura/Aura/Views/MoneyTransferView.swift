@@ -40,7 +40,7 @@ struct MoneyTransferView: View {
 }
 
 #Preview {
-    MoneyTransferView()
+    MoneyTransferView(viewModel: MoneyTransferViewModel())
 }
 
 struct MoneyTransferHeaderView: View {
@@ -70,7 +70,7 @@ struct MoneyTransferHeaderView: View {
 struct MoneyTransferFormView: View {
     
     @Binding var recipientInfo: String
-    @Binding var amount: String
+    @Binding var amount: Float
     
     var body: some View {
         
@@ -80,7 +80,16 @@ struct MoneyTransferFormView: View {
         
         MoneyTransferFormItem(title: "Amount (€)",
                               placeholder: "0.00",
-                              bindingText: $amount)
+                              bindingText: $amount.asStringBinding)
+    }
+}
+
+extension Binding where Value == Float {
+    var asStringBinding: Binding<String> {
+        Binding<String>(
+            get: { String(format: "%.2f", self.wrappedValue) },
+            set: { self.wrappedValue = Float($0) ?? self.wrappedValue }
+        )
     }
 }
 
