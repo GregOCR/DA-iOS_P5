@@ -5,74 +5,73 @@
 //  Created by Vincent Saluzzo on 29/09/2023.
 //
 
-import Combine
 import Foundation
 
-enum LoginError: String {
+enum LoginMessageError: String {
     
-    case none = "",
-         emailError = "Please login with a valid email address.",
-         passwordError = "Please login with a password.",
-         accessDeniedError = "Please login with a valid email address and password.",
-         emailPasswordError = "Please indicate an email and a password in respective text fields."
+    case noError = "",
+         emptyUsernamePasswordError = "Please input an email and a password in respective text fields.",
+         emptyUsernameError = "Please input an email address.",
+         emptyPasswordError = "Please input a password.",
+         invalidFormattedEmailError = "Please input a valid formated email address.",
+         invalidFormattedEmailAndEmptyPasswordError = "Please input a valid formated email address and a password.",
+         accessDeniedError = "Please login with a valid account email address / password."
 }
 
 class AuthenticationViewModel: ObservableObject {
     
     @Published var username: String = ""
     @Published var password: String = ""
-    @Published var loginError: LoginError = .none
+    @Published var loginError: LoginMessageError = .noError
     
     let onLoginSucceed: ( () -> Void )
     
-    private var cancellables = Set<AnyCancellable>()
-    private let authService = AuthService()
+    private let authService: AuthService
     private let keychainService = KeychainService()
     
-    private let accountName = "aura" // id name used to manage the token
+    private let accountName = "aura" // id name used to manage the account
     
-    init(_ callback: @escaping () -> Void) {
+    init(service: AuthService = AuthService(),
+         _ callback: @escaping () -> Void) {
+        self.authService = service
         self.onLoginSucceed = callback
     }
     
-    func login() {
+    @MainActor
+    func login() async {
         
-        if username.isEmpty && password.isEmpty { // check if username and password are occured
-            loginError = .emailPasswordError
-            return
-        }
-                
-        guard isValidEmail(username) else { // check if username email address is valid
-            loginError = .emailError
+        if username.isEmpty && password.isEmpty { // check if username and password are empty
+            loginError = .emptyUsernamePasswordError
             return
         }
         
-        guard !password.isEmpty else { // check if password is login with
-            loginError = .passwordError
+        if !username.isEmpty && password.isEmpty { // check if password is missing
+            if !Tools.isValidEmail(username) { // check if username is a right formatted email address
+                loginError = .invalidFormattedEmailAndEmptyPasswordError
+                return
+            }
+            loginError = .emptyPasswordError
             return
         }
-
-        authService.login(username: username, password: password)
-            .sink(receiveCompletion: { completion in
-                switch completion {
-                case .finished:
-                    break
-                case .failure(let error):
-                    self.loginError = .accessDeniedError // if username email address / password input is not valid
-                    print(error.localizedDescription)
-                }
-            }, receiveValue: { [weak self] authResponse in
-                self?.keychainService.save(token: authResponse.token,
-                                           account: self?.accountName ?? "aura")
-                print(authResponse.token)
-                self?.onLoginSucceed()
-            })
-            .store(in: &cancellables)
-    }
-    
-    private func isValidEmail(_ email: String) -> Bool {
-        let emailFormat = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,64}" // most emails standard format
-        let emailPredicate = NSPredicate(format:"SELF MATCHES %@", emailFormat)
-        return emailPredicate.evaluate(with: email)
+        
+        if username.isEmpty && !password.isEmpty { // check if username is a right formatted email address while password is not empty
+            loginError = .emptyUsernameError
+            return
+        }
+        
+        if !Tools.isValidEmail(username) { // check if username is a right formatted email address
+            loginError = .invalidFormattedEmailError
+            return
+        }
+        
+        do {
+            let authResponse = try await authService.login(username: username, password: password)
+            keychainService.save(token: authResponse.token, account: "aura")
+            onLoginSucceed()
+        } catch {
+            loginError = .accessDeniedError
+            
+            print(error.localizedDescription)
+        }
     }
 }

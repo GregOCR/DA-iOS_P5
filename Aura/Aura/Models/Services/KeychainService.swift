@@ -18,7 +18,7 @@ class KeychainService {
             kSecClass: kSecClassGenericPassword,
             kSecAttrAccessible: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
         ] as CFDictionary
-
+        
         // Add to keychain
         let status = SecItemAdd(query, nil)
         if status != errSecSuccess {
@@ -31,11 +31,11 @@ class KeychainService {
             let updateAttributes = [
                 kSecValueData: data
             ] as CFDictionary
-
+            
             SecItemUpdate(updateQuery, updateAttributes)
         }
     }
-
+    
     func getToken(account: String) -> String? {
         let query = [
             kSecAttrAccount: account,
@@ -43,10 +43,10 @@ class KeychainService {
             kSecReturnData: kCFBooleanTrue!,
             kSecMatchLimit: kSecMatchLimitOne
         ] as CFDictionary
-
+        
         var dataTypeRef: AnyObject?
         let status = SecItemCopyMatching(query, &dataTypeRef)
-
+        
         if status == errSecSuccess {
             if let data = dataTypeRef as? Data {
                 return String(data: data, encoding: .utf8)

@@ -26,7 +26,3 @@ struct AccountDetailTransactionEntryView: View {
         .cornerRadius(8)
         .padding([.horizontal])    }
 }
-
-//#Preview {
-//    AccountDetailTransactionEntryView()
-//}
