@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Combine
 import SwiftUI
 
 struct AccountDetails {
@@ -14,47 +13,53 @@ struct AccountDetails {
     var transactions: [Transaction]
 }
 
+enum AccountDetailError {
+    case noError,
+         loadingAccountDetailsError
+}
+
 class AccountDetailViewModel: ObservableObject {
     
     @Published var totalAmount: String = ""
     @Published var recentTransactions: [Transaction] = []
-
-    private var cancellables = Set<AnyCancellable>()
-
-    init() {
-        loadAccountDetails()
-    }
     
-    func loadAccountDetails() {
-        guard let url = URL(string: "http://127.0.0.1:8080/account") else { return }
-
-        NetworkService.shared.request(url: url)
-            .sink(receiveCompletion: { completion in
-                switch completion {
-                case .finished:
-                    break
-                case .failure(let error):
-                    print("Error loading account details: \(error.localizedDescription)")
-                }
-            }, receiveValue: { [weak self] (accountResponse: AccountResponse) in
-                let accountDetails = AccountDetails(currentBalance: accountResponse.currentBalance,
-                                                    transactions: accountResponse.transactions.map { transaction in
-                    let responseTransaction = Transaction()
-                    responseTransaction.value = transaction.value
-                    responseTransaction.label = transaction.label
-                    return responseTransaction
-                } )
-                
-                self?.updateUI(with: accountDetails)
-                    })
-            .store(in: &cancellables)
-    }
+    private var networkService: NetworkServiceProtocol
     
-    private func updateUI(with accountDetails: AccountDetails) {
-        DispatchQueue.main.async {
-            // Mise à jour de l'interface utilisateur avec les données reçues
-            self.totalAmount = NumberFormatter.currencyFormatter.string(from: NSDecimalNumber(decimal: accountDetails.currentBalance)) ?? "€0.00"
-            self.recentTransactions = accountDetails.transactions
+    private var accountDetailError: AccountDetailError = .noError
+    
+    init(networkService: NetworkServiceProtocol = NetworkService.shared) {
+        self.networkService = networkService
+        Task {
+            await loadAccountDetails()
         }
+    }
+    
+    func loadAccountDetails() async {
+        guard let url = URL(string: "http://127.0.0.1:8080/account") else { return }
+        
+        do {
+            let accountResponse: AccountResponse = try await self.networkService.request(url: url)
+            let accountDetails = transformToAccountDetails(from: accountResponse)
+            await updateUI(with: accountDetails)
+        } catch {
+            accountDetailError = .loadingAccountDetailsError
+            print("Error loading account details: \(error.localizedDescription)")
+        }
+    }
+    
+    private func transformToAccountDetails(from response: AccountResponse) -> AccountDetails {
+        return AccountDetails(currentBalance: response.currentBalance,
+                              transactions: response.transactions.map { transaction in
+            let responseTransaction = Transaction()
+            responseTransaction.value = transaction.value
+            responseTransaction.label = transaction.label
+            return responseTransaction
+        })
+    }
+    
+    @MainActor
+    private func updateUI(with accountDetails: AccountDetails) {
+        self.totalAmount = NumberFormatter.currencyFormatter.string(from: NSDecimalNumber(decimal: accountDetails.currentBalance)) ?? ""
+        self.recentTransactions = accountDetails.transactions
     }
 }

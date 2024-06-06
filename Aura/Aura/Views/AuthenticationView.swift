@@ -22,9 +22,10 @@ struct AuthenticationView: View {
                 AuthenticationFormView(usernameBinding: $viewModel.username,
                                        passwordBinding: $viewModel.password,
                                        loginError: $viewModel.loginError)
-                
                 Button(action: {
-                    viewModel.login()
+                    Task {
+                            await viewModel.login()
+                        }
                 }) {
                     Text("Connection")
                         .frame(maxWidth: .infinity)
@@ -34,7 +35,7 @@ struct AuthenticationView: View {
                 .foregroundColor(.white)
                 .cornerRadius(8)
                 
-                if viewModel.loginError != .none { // if login error
+                if viewModel.loginError != .noError { // if login error
                     Text(viewModel.loginError.rawValue)
                 }
             }
@@ -47,9 +48,7 @@ struct AuthenticationView: View {
 }
 
 #Preview {
-    AuthenticationView(viewModel: AuthenticationViewModel({
-        
-    }))
+    AuthenticationView(viewModel: AuthenticationViewModel({}))
 }
 
 struct AuthenticationBackgroundGradientView: View {
@@ -84,7 +83,7 @@ struct AuthenticationFormView: View {
     @Binding var usernameBinding: String
     @Binding var passwordBinding: String
     
-    @Binding var loginError: LoginError
+    @Binding var loginError: LoginMessageError
     
     var body: some View {
         
@@ -96,7 +95,7 @@ struct AuthenticationFormView: View {
             .keyboardType(.emailAddress)
             .disableAutocorrection(true)
             .overlay(content: { // red outline if email or access error
-                if (loginError == .emailError) || (loginError == .accessDeniedError) || (loginError == .emailPasswordError) {
+                if (loginError == .emptyUsernameError) || (loginError == .accessDeniedError) || (loginError == .emptyUsernamePasswordError) || (loginError == .invalidFormattedEmailError) || (loginError == .invalidFormattedEmailAndEmptyPasswordError){
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Color.red, lineWidth: 2)
                 }
@@ -107,7 +106,7 @@ struct AuthenticationFormView: View {
             .background(Color(UIColor.secondarySystemBackground))
             .cornerRadius(8)
             .overlay(content: { // red outline if password or access error
-                if (loginError == .passwordError) || (loginError == .accessDeniedError)  || (loginError == .emailPasswordError) {
+                if (loginError == .emptyPasswordError) || (loginError == .accessDeniedError)  || (loginError == .emptyUsernamePasswordError) || (loginError == .invalidFormattedEmailAndEmptyPasswordError) {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Color.red, lineWidth: 2)
                 }

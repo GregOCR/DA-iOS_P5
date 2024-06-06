@@ -8,19 +8,107 @@
 import Foundation
 import SwiftUI
 
-class MoneyTransferViewModel: ObservableObject {
+enum TransferMessage: String {
     
-    @Published var recipient: String = ""
-    @Published var amount: Float = 0.0
-    
-    @Published var transferMessage: String = ""
-    
-    func sendMoney() {
-        if !recipient.isEmpty && !amount.isZero {
-            transferMessage = "Successfully transferred \(amount) to \(recipient)"
-        } else {
-            transferMessage = "Please enter recipient and amount."
-        }
-    }
+    case noMessage = "",
+         emptyEmailAmountError = "Please input an email and an amount in respective text fields.",
+         emptyEmailError = "Please input an email address.",
+         emptyAmountError = "Please input an amount.",
+         invalidFormattedEmailError = "Please input a valid formated email address.",
+         invalidFormattedEmailAndEmptyAmountError = "Please input a valid formated email address and an amount.",
+         notEnoughMoneyResourcesError = "Your current resources are insufficient. Enter a consistent amount.",
+         transferError = "Transfer failed.",
+         transferSuccess = "SUCCESSFULLY TRANSFERED"
 }
 
+class MoneyTransferViewModel: ObservableObject {
+    
+    @ObservedObject private var accountViewModel = AccountDetailViewModel()
+    
+    @Published var recipient: String = ""
+    @Published var amount: String = ""
+    
+    @Published var transferMessage: TransferMessage = .noMessage
+    
+    init(accountViewModel: AccountDetailViewModel = AccountDetailViewModel(), recipient: String, amount: String, transferMessage: TransferMessage) {
+        self.accountViewModel = accountViewModel
+        self.recipient = recipient
+        self.amount = amount
+        self.transferMessage = transferMessage
+    }
+    
+    func initTransfer() {
+        recipient = ""
+        amount = ""
+        transferMessage = .noMessage
+    }
+    
+   func sendMoney() async {
+
+       guard hasRightInformationsToSendMoney() else {
+           return
+       }
+
+       let transferService = TransferService()
+        do {
+            try await transferService.transfer(recipient: recipient, amount: NSDecimalNumber(string: amount) as Decimal)
+            transferMessage = .transferSuccess
+        } catch {
+            transferMessage = .transferError
+            print(error.localizedDescription)
+        }
+    }
+    
+    private func hasRightInformationsToSendMoney() -> Bool {
+        
+        if recipient.isEmpty && amount.isEmpty {     // check if recipient and amount are empty
+            transferMessage = .emptyEmailAmountError
+            return false
+        }
+        
+        if !recipient.isEmpty && amount.isEmpty { // check if amount is missing
+            if !Tools.isValidEmail(recipient) { // check if recipient is a right formatted email address
+                transferMessage = .invalidFormattedEmailAndEmptyAmountError
+                return false
+            }
+            transferMessage = .emptyAmountError
+            return false
+        }
+        
+       if recipient.isEmpty && !amount.isEmpty { // check if recipient email is right formatted while amount is not empty
+            transferMessage = .emptyEmailError
+            return false
+        }
+        
+        if !Tools.isValidEmail(recipient) { // check if username is a right formatted email address
+            transferMessage = .invalidFormattedEmailError
+            return false
+        }
+        
+        if !accountHasEnoughMoneyForAmountTransfer() { // check if user has enough money to make the transfer
+            transferMessage = .notEnoughMoneyResourcesError
+            return false
+        }
+        
+        return true
+    }
+    
+    private func accountHasEnoughMoneyForAmountTransfer() -> Bool {
+        let totalAccountAmount = formatNumberString(accountViewModel.totalAmount)
+        let transferAmount = Float(amount)
+        return transferAmount! <= totalAccountAmount!
+    }
+    
+    private func formatNumberString(_ input: String) -> Float? {
+        let filteredString = input.reduce("") { result, character in
+            if character == "," {
+                return result + "."
+            } else if character.isNumber || character == "." {
+                return result + String(character)
+            } else {
+                return result
+            }
+        }
+        return Float(filteredString)
+    }
+}

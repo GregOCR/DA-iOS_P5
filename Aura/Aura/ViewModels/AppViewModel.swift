@@ -17,7 +17,9 @@ class AppViewModel: ObservableObject {
     
     var authenticationViewModel: AuthenticationViewModel {
         return AuthenticationViewModel { [weak self] in
-            self?.isLogged = true
+            DispatchQueue.main.async { // added main.async to be on the main thread
+                self?.isLogged = true
+            }
         }
     }
     

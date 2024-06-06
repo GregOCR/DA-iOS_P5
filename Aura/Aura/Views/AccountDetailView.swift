@@ -44,7 +44,7 @@ struct AccountDetailView: View {
         }
         .transition(.opacity.animation(.easeInOut(duration: 0.5))) // define the transition animation for the view
         .onTapGesture {
-            self.endEditing(true)  // This will dismiss the keyboard when tapping outside
+            self.endEditing(true) // This will dismiss the keyboard when tapping outside
         }
         .onAppear {
             recentTransactionsOnly = true
