@@ -83,7 +83,7 @@ class MoneyTransferViewModelTests: XCTestCase {
         viewModel.recipient = "test@example.com"
         viewModel.amount = "100"
         
-        mockNetworkService.mockResponse = .success(TransferResponse(status: "ok"))
+        mockNetworkService.mockResponse = .success(TransferResponse(status: "OK"))
         
         await viewModel.sendMoney()
         
