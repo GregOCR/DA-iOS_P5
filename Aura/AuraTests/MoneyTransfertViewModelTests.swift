@@ -12,11 +12,12 @@ class MoneyTransferViewModelTests: XCTestCase {
 
     var viewModel: MoneyTransferViewModel!
     var accountViewModel: AccountDetailViewModel!
+    var mockNetworkService = MockNetworkService()
     
     override func setUp() {
         super.setUp()
         accountViewModel = AccountDetailViewModel()
-        viewModel = MoneyTransferViewModel(accountViewModel: accountViewModel, recipient: "", amount: "", transferMessage: .noMessage)
+        viewModel = MoneyTransferViewModel(accountViewModel: accountViewModel, recipient: "", amount: "", transferMessage: .none, transferService: TransferService(networkService: self.mockNetworkService))
     }
     
     override func tearDown() {
@@ -81,25 +82,11 @@ class MoneyTransferViewModelTests: XCTestCase {
         accountViewModel.totalAmount = "200"
         viewModel.recipient = "test@example.com"
         viewModel.amount = "100"
-                
+        
+        mockNetworkService.mockResponse = .success(TransferResponse(status: "ok"))
+        
         await viewModel.sendMoney()
         
         XCTAssertEqual(viewModel.transferMessage, .transferSuccess)
-    }
-}
-
-class MockTransferService: TransferService {
-    
-    var shouldFail: Bool
-    
-    init(shouldFail: Bool = false) {
-        self.shouldFail = shouldFail
-        super.init()
-    }
-    
-    override func transfer(recipient: String, amount: Decimal) async throws {
-        if shouldFail {
-            throw URLError(.badServerResponse)
-        }
     }
 }

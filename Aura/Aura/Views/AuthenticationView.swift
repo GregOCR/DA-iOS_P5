@@ -19,8 +19,8 @@ struct AuthenticationView: View {
             VStack(spacing: 20) {
                 AuthenticationHeaderView()
                 
-                AuthenticationFormView(usernameBinding: $viewModel.username,
-                                       passwordBinding: $viewModel.password,
+                AuthenticationFormView(username: $viewModel.username,
+                                       password: $viewModel.password,
                                        loginError: $viewModel.loginError)
                 Button(action: {
                     Task {
@@ -53,8 +53,8 @@ struct AuthenticationView: View {
 
 struct AuthenticationBackgroundGradientView: View {
     
-    let gradientStart = Color.accentColor.opacity(0.7)
-    let gradientEnd = Color.accentColor.translucent()
+    private let gradientStart = Color.accentColor.opacity(0.7)
+    private let gradientEnd = Color.accentColor.opacity(0)
     
     var body: some View {
         LinearGradient(gradient: Gradient(colors: [gradientStart, gradientEnd]),
@@ -80,14 +80,18 @@ struct AuthenticationHeaderView: View {
 
 struct AuthenticationFormView: View {
     
-    @Binding var usernameBinding: String
-    @Binding var passwordBinding: String
+    @Binding var username: String
+    @Binding var password: String
     
     @Binding var loginError: LoginMessageError
     
     var body: some View {
         
-        TextField("Email address", text: $usernameBinding)
+        let errorCheck = (loginError == .accessDeniedError)
+        || (loginError == .emptyUsernamePasswordError)
+        || (loginError == .invalidFormattedEmailAndEmptyPasswordError)
+        
+        TextField("Email address", text: $username)
             .padding()
             .background(Color(UIColor.secondarySystemBackground))
             .cornerRadius(8)
@@ -95,18 +99,23 @@ struct AuthenticationFormView: View {
             .keyboardType(.emailAddress)
             .disableAutocorrection(true)
             .overlay(content: { // red outline if email or access error
-                if (loginError == .emptyUsernameError) || (loginError == .accessDeniedError) || (loginError == .emptyUsernamePasswordError) || (loginError == .invalidFormattedEmailError) || (loginError == .invalidFormattedEmailAndEmptyPasswordError){
+                if errorCheck
+                    || (loginError == .emptyUsernameError)
+                    || (loginError == .invalidFormattedEmailError)
+                {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Color.red, lineWidth: 2)
                 }
             })
         
-        SecureField("Password", text: $passwordBinding)
+        SecureField("Password", text: $password)
             .padding()
             .background(Color(UIColor.secondarySystemBackground))
             .cornerRadius(8)
             .overlay(content: { // red outline if password or access error
-                if (loginError == .emptyPasswordError) || (loginError == .accessDeniedError)  || (loginError == .emptyUsernamePasswordError) || (loginError == .invalidFormattedEmailAndEmptyPasswordError) {
+                if errorCheck
+                    || (loginError == .emptyPasswordError)
+                {
                     RoundedRectangle(cornerRadius: 8)
                         .stroke(Color.red, lineWidth: 2)
                 }

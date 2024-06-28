@@ -44,24 +44,3 @@ final class AccountDetailViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.recentTransactions.count, 0)
     }
 }
-
-class MockNetworkService: NetworkServiceProtocol {
-    
-    enum MockResponse {
-        case success(AccountResponse)
-        case failure(Error)
-    }
-    
-    var mockResponse: MockResponse?
-    
-    func request<T: Decodable>(url: URL) async throws -> T {
-        switch mockResponse {
-        case .success(let response):
-            return response as! T
-        case .failure(let error):
-            throw error
-        case .none:
-            throw NSError(domain: "", code: 0, userInfo: nil)
-        }
-    }
-}

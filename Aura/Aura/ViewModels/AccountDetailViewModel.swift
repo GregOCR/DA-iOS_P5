@@ -35,18 +35,18 @@ class AccountDetailViewModel: ObservableObject {
     }
     
     func loadAccountDetails() async {
-        guard let url = URL(string: "http://127.0.0.1:8080/account") else { return }
+      
+        let accountService = AccountService(networkService: self.networkService)
         
         do {
-            let accountResponse: AccountResponse = try await self.networkService.request(url: url)
-            let accountDetails = transformToAccountDetails(from: accountResponse)
-            await updateUI(with: accountDetails)
-        } catch {
-            accountDetailError = .loadingAccountDetailsError
-            print("Error loading account details: \(error.localizedDescription)")
-        }
+            let accountResponse: AccountResponse = try await accountService.loadAccountDetails()
+                let accountDetails = transformToAccountDetails(from: accountResponse)
+                await updateUI(with: accountDetails)
+            } catch {
+                accountDetailError = .loadingAccountDetailsError
+                print("Error loading account details: \(error.localizedDescription)")
+            }
     }
-    
     private func transformToAccountDetails(from response: AccountResponse) -> AccountDetails {
         return AccountDetails(currentBalance: response.currentBalance,
                               transactions: response.transactions.map { transaction in

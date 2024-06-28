@@ -37,6 +37,7 @@ struct AuraApp: App {
                 }
             }
             .animation(.easeInOut(duration: 0.5), value: UUID())
+            .preferredColorScheme(.light)
         }
     }
 }

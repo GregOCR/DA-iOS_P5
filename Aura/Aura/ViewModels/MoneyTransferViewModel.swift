@@ -10,7 +10,7 @@ import SwiftUI
 
 enum TransferMessage: String {
     
-    case noMessage = "",
+    case none = "",
          emptyEmailAmountError = "Please input an email and an amount in respective text fields.",
          emptyEmailError = "Please input an email address.",
          emptyAmountError = "Please input an amount.",
@@ -28,19 +28,28 @@ class MoneyTransferViewModel: ObservableObject {
     @Published var recipient: String = ""
     @Published var amount: String = ""
     
-    @Published var transferMessage: TransferMessage = .noMessage
+    @Published var transferMessage: TransferMessage = .none
     
-    init(accountViewModel: AccountDetailViewModel = AccountDetailViewModel(), recipient: String, amount: String, transferMessage: TransferMessage) {
+    private let transferService: TransferService
+    
+    init(
+        accountViewModel: AccountDetailViewModel = AccountDetailViewModel(),
+        recipient: String,
+        amount: String,
+        transferMessage: TransferMessage,
+        transferService: TransferService = TransferService()
+    ) {
         self.accountViewModel = accountViewModel
         self.recipient = recipient
         self.amount = amount
         self.transferMessage = transferMessage
+        self.transferService = transferService
     }
     
     func initTransfer() {
         recipient = ""
         amount = ""
-        transferMessage = .noMessage
+        transferMessage = .none
     }
     
    func sendMoney() async {
@@ -49,10 +58,11 @@ class MoneyTransferViewModel: ObservableObject {
            return
        }
 
-       let transferService = TransferService()
         do {
-            try await transferService.transfer(recipient: recipient, amount: NSDecimalNumber(string: amount) as Decimal)
-            transferMessage = .transferSuccess
+            let transferResponse: TransferResponse = try await transferService.transfer(recipient: recipient, amount: NSDecimalNumber(string: amount) as Decimal)
+            if transferResponse == TransferResponse(status: "OK") {
+                transferMessage = .transferSuccess
+            }
         } catch {
             transferMessage = .transferError
             print(error.localizedDescription)

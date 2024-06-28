@@ -25,7 +25,7 @@ struct AccountDetailView: View {
             }
             // Button to see details of transactions
             Button(action: {
-                withAnimation { // animating changed elements by action
+                withAnimation {
                     recentTransactionsOnly.toggle()
                 }
             }) {

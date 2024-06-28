@@ -40,27 +40,7 @@ class AuthenticationViewModel: ObservableObject {
     @MainActor
     func login() async {
         
-        if username.isEmpty && password.isEmpty { // check if username and password are empty
-            loginError = .emptyUsernamePasswordError
-            return
-        }
-        
-        if !username.isEmpty && password.isEmpty { // check if password is missing
-            if !Tools.isValidEmail(username) { // check if username is a right formatted email address
-                loginError = .invalidFormattedEmailAndEmptyPasswordError
-                return
-            }
-            loginError = .emptyPasswordError
-            return
-        }
-        
-        if username.isEmpty && !password.isEmpty { // check if username is a right formatted email address while password is not empty
-            loginError = .emptyUsernameError
-            return
-        }
-        
-        if !Tools.isValidEmail(username) { // check if username is a right formatted email address
-            loginError = .invalidFormattedEmailError
+        guard loginAccessGranted() else {
             return
         }
         
@@ -70,8 +50,36 @@ class AuthenticationViewModel: ObservableObject {
             onLoginSucceed()
         } catch {
             loginError = .accessDeniedError
-            
             print(error.localizedDescription)
         }
+    }
+    
+    private func loginAccessGranted() -> Bool {
+        
+        if username.isEmpty && password.isEmpty { // check if username and password are empty
+            loginError = .emptyUsernamePasswordError
+            return false
+        }
+        
+        if !username.isEmpty && password.isEmpty { // check if password is missing
+            if !Tools.isValidEmail(username) { // check if username is a right formatted email address
+                loginError = .invalidFormattedEmailAndEmptyPasswordError
+                return false
+            }
+            loginError = .emptyPasswordError
+            return false
+        }
+        
+        if username.isEmpty && !password.isEmpty { // check if username is a right formatted email address while password is not empty
+            loginError = .emptyUsernameError
+            return false
+        }
+        
+        if !Tools.isValidEmail(username) { // check if username is a right formatted email address
+            loginError = .invalidFormattedEmailError
+            return false
+        }
+        
+        return true
     }
 }

@@ -90,6 +90,6 @@ class FakeAuthService: AuthService {
 
 class FakeAuthServiceAccessDenied: AuthService {
     override func login(username: String, password: String) async throws -> AuthResponse {
-        throw AuthError.accessDenied
+        throw NetworkError.accessDenied
     }
 }

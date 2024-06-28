@@ -9,10 +9,10 @@ import SwiftUI
 
 struct MoneyTransferView: View {
     
-    @ObservedObject var transferViewModel = MoneyTransferViewModel(recipient: "", amount: "", transferMessage: .noMessage)
+    @ObservedObject var transferViewModel = MoneyTransferViewModel(recipient: "", amount: "", transferMessage: .none)
     @ObservedObject var accountViewModel = AccountDetailViewModel()
     
-    init(transferViewModel: MoneyTransferViewModel = MoneyTransferViewModel(recipient: "", amount: "", transferMessage: .noMessage), accountViewModel: AccountDetailViewModel) {
+    init(transferViewModel: MoneyTransferViewModel = MoneyTransferViewModel(recipient: "", amount: "", transferMessage: .none), accountViewModel: AccountDetailViewModel) {
         self.transferViewModel = transferViewModel
         self.accountViewModel = accountViewModel
     }
@@ -26,21 +26,15 @@ struct MoneyTransferView: View {
                                   recipientInfo: $transferViewModel.recipient,
                                   amount: $transferViewModel.amount)
             
-            Button(action: {
-                Task {
-                    await transferViewModel.sendMoney()
-                }
-            } ) {
-                HStack {
-                    Image(systemName: "arrow.right.circle.fill")
-                    Text("Send")
-                }
-            }
-            .buttonStyle(PlainButtonStyle())
+                AppButtonView(title: "Send", imageName: "arrow.right.circle.fill", action: {
+                    Task {
+                        await transferViewModel.sendMoney()
+                    }
+                })
             
-            if transferViewModel.transferMessage != .noMessage  {
+            if transferViewModel.transferMessage != .none  {
                 Text(transferViewModel.transferMessage.rawValue)
-                    .padding([.horizontal, .top], 20)
+                    .padding([.horizontal, .top], 10)
                     .multilineTextAlignment(.center)
                     .foregroundColor(transferViewModel.transferMessage == .transferSuccess ? .green : .red)
                     .fontWeight(transferViewModel.transferMessage == .transferSuccess ? .heavy : .regular)
@@ -59,8 +53,7 @@ struct MoneyTransferView: View {
                               imageName: "xmark.circle.fill",
                               action: { transferViewModel.initTransfer()
                 })
-                .padding(.top, 20)
-
+                .padding(.top, 10)
             }
             Spacer()
         }
@@ -109,6 +102,13 @@ struct MoneyTransferFormView: View {
     
     var body: some View {
         
+        let errorCheck = (viewModel.transferMessage == .emptyEmailAmountError)
+        || (viewModel.transferMessage == .invalidFormattedEmailAndEmptyAmountError)
+        || (viewModel.transferMessage == .transferError)
+        || (viewModel.transferMessage == .transferSuccess)
+        
+        let transferColor = viewModel.transferMessage == .transferSuccess ? Color.green : Color.red
+        
         VStack(alignment: .leading) {
             Text("Recipient (Email or Phone)")
                 .font(.headline)
@@ -120,12 +120,14 @@ struct MoneyTransferFormView: View {
                 .keyboardType(.emailAddress)
                 .disableAutocorrection(true)
                 .overlay(content: { // red outline if email or access error
-                    if (viewModel.transferMessage == .emptyEmailAmountError) || (viewModel.transferMessage == .emptyEmailError) || (viewModel.transferMessage == .invalidFormattedEmailAndEmptyAmountError) || (viewModel.transferMessage == .invalidFormattedEmailError) || (viewModel.transferMessage == .transferError) || (viewModel.transferMessage == .transferSuccess){
+                    if errorCheck
+                        || (viewModel.transferMessage == .emptyEmailError)
+                        || (viewModel.transferMessage == .invalidFormattedEmailError)
+                    {
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(viewModel.transferMessage == .transferSuccess ? Color.green : Color.red, lineWidth: 2)
+                            .stroke(transferColor, lineWidth: 2)
                     }
                 })
-       
             Text("€ Amount (max. \(totalAccountAmount)))")
                 .font(.headline)
             TextField("0.00", text: $amount)
@@ -137,12 +139,14 @@ struct MoneyTransferFormView: View {
                     processAmount()
                 })
                 .overlay(content: { // red outline if email or access error
-                    if (viewModel.transferMessage == .emptyAmountError) || (viewModel.transferMessage == .emptyEmailAmountError) || (viewModel.transferMessage == .invalidFormattedEmailAndEmptyAmountError) || (viewModel.transferMessage == .notEnoughMoneyResourcesError) || (viewModel.transferMessage == .transferError) || (viewModel.transferMessage == .transferSuccess){
+                    if errorCheck
+                        || (viewModel.transferMessage == .emptyAmountError)
+                        || (viewModel.transferMessage == .notEnoughMoneyResourcesError)
+                    {
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(viewModel.transferMessage == .transferSuccess ? Color.green : Color.red, lineWidth: 2)
+                            .stroke(transferColor, lineWidth: 2)
                     }
                 })
-            
         }
     }
     
@@ -174,5 +178,3 @@ struct MoneyTransferFormView: View {
         }
     }
 }
-
-
